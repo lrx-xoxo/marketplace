@@ -1,4 +1,9 @@
 <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+<style media="screen">
+  tr{
+    text-align: center;
+  }
+</style>
 
 <?php
 
@@ -14,8 +19,8 @@
         exit();
     }
 
-	$pageTitle = 'Demo PHP Shopping cart - Add to cart using Session';
-	$metaDesc = 'Demo PHP Shopping cart - Add to cart using Session';
+	$pageTitle = 'cart';
+	$metaDesc = 'cart';
 
 
     //pre($_SESSION);
@@ -31,7 +36,8 @@
             </tr>
         </table>
         <?php }?>
-        <?php if(isset($_SESSION['cart_items']) && count($_SESSION['cart_items']) > 0){?>
+        <?php if(isset($_SESSION['cart_items']) && count($_SESSION['cart_items']) > 0){
+          ?>
         <table class="table">
            <thead>
                 <tr>
@@ -45,6 +51,7 @@
                 <?php
                     $totalCounter = 0;
                     $itemCounter = 0;
+
                     foreach($_SESSION['cart_items'] as $key => $item){
 
 
@@ -71,7 +78,7 @@
                             <input type="number" name="" class="cart-qty-single" data-item-id="<?php echo $key?>" value="<?php echo $item['qty'];?>" min="1" max="1000" >
                         </td>
                         <td>
-                            <?php echo $total;?>
+                            <?php echo "$".$total;?>
                         </td>
                     </tr>
                 <?php }?>
@@ -100,4 +107,3 @@
         <?php }?>
     </div>
 </div>
-<?php include('layouts/footer.php');?>
