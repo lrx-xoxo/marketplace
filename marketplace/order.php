@@ -141,7 +141,6 @@
           <table name="orderlist" id="dtable" width="1100" align="center" >
         <tr>
           <th>Order Id</th>
-          <th>Product Id</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>Email</th>
@@ -155,7 +154,6 @@
 
       echo "	<tr class='tb1'>";
       echo	"	<td>".$result['id']."</td>";
-      echo	"	<td>".$result['productID']."</td>";
       echo  "  <td>".$result['firstname']."</td>";
       echo	"	<td>".$result['lastname']."</td>";
       echo	"	<td>".$result['email']."</td>";
