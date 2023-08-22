@@ -3,6 +3,9 @@
 <?php
     session_start();
     include ('header2.php');
+  //   foreach($_SESSION['cart_items'] as $key => $item){
+  //   echo $item['total_price'];
+  // }
 
     if(!isset($_SESSION['cart_items']) || empty($_SESSION['cart_items']))
     {
@@ -27,15 +30,30 @@
            }
            else
            {
-               //validate_input is a custom function
-               //you can find it in helpers.php file
+
+                 if(isset($_SESSION['cart_items']) || !empty($_SESSION['cart_items']))
+                 {
+
+                     $totalPrice = 0;
+                     foreach($_SESSION['cart_items'] as $item)
+                     {
+                         $totalPrice+=$item['total_price'];
+
+
+                     }
+
+                                  echo $totalPrice;
+
+
+
+
                 $firstname  = $_POST['firstname'];
                 $lastname   = $_POST['lastname'];
                 $email      = $_POST['email'];
                 $address    = $_POST['address'];
 
 
-                $sql = "INSERT INTO orders (firstname, lastname, email, address) values ('$firstname', '$lastname', '$email', '$address')";
+                $sql = "INSERT INTO orders (firstname, lastname, email, address, total_price) values ('$firstname', '$lastname', '$email', '$address','$totalPrice')";
                 $data=mysqli_query($con,$sql);
                 $params = [
                     'firstname' => $firstname,
@@ -43,55 +61,16 @@
                     'email' => $email,
                     'address' => $address,
                 ];
+              }
 
-                $statement->execute($params);
-                if($statement->rowCount() == 1)
-                {
 
-                    $getOrderID = $db->lastInsertId();
 
-                    if(isset($_SESSION['cart_items']) || !empty($_SESSION['cart_items']))
-                    {
-                        $sqlDetails = 'insert into order_details (order_id, product_id, product_name, product_price, qty, total_price) values(:order_id,:product_id,:product_name,:product_price,:qty,:total_price)';
-                        $orderDetailStmt = $db->prepare($sqlDetails);
+                                   unset($_SESSION['cart_items']);
+                                   $_SESSION['confirm_order'] = true;
+                                   header('location:thank-you.php');
+                                   exit();
 
-                        $totalPrice = 0;
-                        foreach($_SESSION['cart_items'] as $item)
-                        {
-                            $totalPrice+=$item['total_price'];
 
-                            $paramOrderDetails = [
-                                'order_id' =>  $getOrderID,
-                                'product_id' =>  $item['product_id'],
-                                'product_name' =>  $item['product_name'],
-                                'product_price' =>  $item['product_price'],
-                                'qty' =>  $item['qty'],
-                                'total_price' =>  $item['total_price']
-                            ];
-
-                            $orderDetailStmt->execute($paramOrderDetails);
-                        }
-
-                        $updateSql = 'update orders set total_price = :total where id = :id';
-
-                        $rs = $db->prepare($updateSql);
-                        $prepareUpdate = [
-                            'total' => $totalPrice,
-                            'id' =>$getOrderID
-                        ];
-
-                        $rs->execute($prepareUpdate);
-
-                        unset($_SESSION['cart_items']);
-                        $_SESSION['confirm_order'] = true;
-                        header('location:thank-you.php');
-                        exit();
-                    }
-                }
-                else
-                {
-                    $errorMsg[] = 'Unable to save your order. Please try again';
-                }
            }
         }
         else
@@ -145,10 +124,8 @@
         }
     }
 
-	$pageTitle = 'Demo PHP Shopping cart checkout page with Validation';
-	$metaDesc = 'Demo PHP Shopping cart checkout page with Validation';
 
-    include('layouts/header.php');
+
 ?>
 <div class="row mt-3">
         <div class="col-md-4 order-md-2 mb-4">
@@ -235,4 +212,3 @@
           </form>
         </div>
       </div>
-<?php include('layouts/footer.php'); ?>
